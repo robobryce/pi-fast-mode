@@ -1,8 +1,8 @@
 # pi-fast-mode
 
-A small, zero-runtime-dependency provider extension for the [Pi coding agent](https://github.com/earendil-works/pi). It extracts Autonomous Agent Bootstrap's currently inline fast-mode provider so a later AAB change can replace that generated local extension with this package. AAB does not install this repository yet.
+A small, zero-runtime-dependency provider extension for the [Pi coding agent](https://github.com/earendil-works/pi). It is the Git-installed implementation of Autonomous Agent Bootstrap's fast-mode provider, replacing AAB's former generated local extension.
 
-The package preserves the inline extension's behavior: fast model profiles are routed through OpenAI's Responses API with the `priority` service tier.
+The package preserves the former inline extension's behavior: fast model profiles are routed through OpenAI's Responses API with the `priority` service tier.
 
 The extension registers one provider stream handler:
 
