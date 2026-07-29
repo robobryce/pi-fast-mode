@@ -1,0 +1,66 @@
+{
+  "name": "pi-fast-mode",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Route AAB fast-mode models through OpenAI Responses with priority service tier in Pi.",
+  "type": "module",
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "check": "npm run lint && npm run typecheck && npm test && npm run test:package && npm run test:audit",
+    "lint": "eslint .",
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "test:audit": "npm audit --omit=dev --audit-level=low",
+    "test:package": "npm pack --dry-run",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "fast-mode",
+    "openai",
+    "priority",
+    "service-tier"
+  ],
+  "author": "Bryce Adelstein Lelbach",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robobryce/pi-fast-mode.git"
+  },
+  "homepage": "https://github.com/robobryce/pi-fast-mode#readme",
+  "bugs": {
+    "url": "https://github.com/robobryce/pi-fast-mode/issues"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-ai": "0.82.1",
+    "@earendil-works/pi-coding-agent": "0.82.1",
+    "@types/node": "26.1.2",
+    "eslint": "10.8.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.65.0"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*"
+  },
+  "peerDependenciesMeta": {
+    "@earendil-works/pi-ai": {
+      "optional": true
+    },
+    "@earendil-works/pi-coding-agent": {
+      "optional": true
+    }
+  },
+  "pi": {
+    "extensions": [
+      "./src/index.ts"
+    ]
+  }
+}
