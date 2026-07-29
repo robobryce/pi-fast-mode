@@ -9,15 +9,15 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  quality:
     strategy:
       fail-fast: false
       matrix:
         node: [22.19.0, 24]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: ${{ matrix.node }}
           cache: npm
@@ -27,3 +27,28 @@ jobs:
       - run: npm test
       - run: npm run test:package
       - run: npm run test:audit
+
+  pi-compatibility:
+    strategy:
+      fail-fast: false
+      matrix:
+        pi-version: [0.80.10, 0.82.1]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22.19.0
+          cache: npm
+      - run: npm ci
+      - name: Install Pi ${{ matrix.pi-version }} without changing the lockfile
+        run: npm install --no-save --package-lock=false --ignore-scripts @earendil-works/pi-ai@${{ matrix.pi-version }} @earendil-works/pi-coding-agent@${{ matrix.pi-version }}
+      - name: Verify exact Pi package versions
+        run: node test/assert-pi-version.mjs ${{ matrix.pi-version }}
+      - run: npm run typecheck
+      - run: npm test
+      - name: Smoke-test Pi package loading
+        run: ./node_modules/.bin/pi --list-models -e .
+        env:
+          PI_CODING_AGENT_DIR: ${{ runner.temp }}/pi-fast-mode-${{ matrix.pi-version }}
+          PI_OFFLINE: "1"

@@ -99,6 +99,30 @@ test("delegates the response model, context, options, and return stream", () => 
 	assert.equal(delegatedOptions?.maxTokens, 4096);
 });
 
+test("calls Pi helpers as bare functions without binding this", () => {
+	const clampReceivers: unknown[] = [];
+	const streamReceivers: unknown[] = [];
+	const clamp = function (this: unknown) {
+		clampReceivers.push(this);
+		return "high";
+	} as FastModeDependencies["clampThinkingLevel"];
+	const delegate = function (this: unknown) {
+		streamReceivers.push(this);
+		return {} as StreamResult;
+	} as FastModeDependencies["streamOpenAIResponses"];
+	const registration = captureRegistration((pi) => {
+		registerFastModeProvider(pi, {
+			clampThinkingLevel: clamp,
+			streamOpenAIResponses: delegate,
+		});
+	});
+
+	streamSimple(registration)(model(), context(), { reasoning: "high" });
+
+	assert.deepEqual(clampReceivers, [undefined]);
+	assert.deepEqual(streamReceivers, [undefined]);
+});
+
 test("always forces priority service tier and falls back to the model token limit", () => {
 	const calls: Parameters<FastModeDependencies["streamOpenAIResponses"]>[] = [];
 	const delegate: FastModeDependencies["streamOpenAIResponses"] = (...args) => {

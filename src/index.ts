@@ -19,18 +19,21 @@ export function registerFastModeProvider(
 	pi: ExtensionAPI,
 	dependencies: Partial<FastModeDependencies> = {},
 ): void {
-	const deps = { ...defaultDependencies, ...dependencies };
+	const {
+		clampThinkingLevel: clamp,
+		streamOpenAIResponses: stream,
+	} = { ...defaultDependencies, ...dependencies };
 
 	pi.registerProvider(FAST_MODE_PROVIDER, {
 		api: FAST_MODE_API,
 		streamSimple(model, context, options) {
 			const responseModel = { ...model, api: "openai-responses" as const };
 			const clampedReasoning = options?.reasoning
-				? deps.clampThinkingLevel(responseModel, options.reasoning)
+				? clamp(responseModel, options.reasoning)
 				: undefined;
 			const reasoningEffort = clampedReasoning === "off" ? undefined : clampedReasoning;
 
-			return deps.streamOpenAIResponses(responseModel, context, {
+			return stream(responseModel, context, {
 				...options,
 				maxTokens: options?.maxTokens ?? model.maxTokens,
 				reasoningEffort,

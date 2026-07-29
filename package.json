@@ -13,7 +13,7 @@
     "check": "npm run lint && npm run typecheck && npm test && npm run test:package && npm run test:audit",
     "lint": "eslint .",
     "test": "node --experimental-strip-types --test test/*.test.ts",
-    "test:audit": "npm audit --omit=dev --audit-level=low",
+    "test:audit": "npm audit --audit-level=low",
     "test:package": "npm pack --dry-run",
     "typecheck": "tsc --noEmit"
   },
@@ -38,9 +38,12 @@
   "engines": {
     "node": ">=22.19.0"
   },
+  "overrides": {
+    "brace-expansion": "5.0.8"
+  },
   "devDependencies": {
     "@earendil-works/pi-ai": "0.82.1",
-    "@earendil-works/pi-coding-agent": "0.82.1",
+    "@earendil-works/pi-coding-agent": "file:test/types/pi-coding-agent",
     "@types/node": "26.1.2",
     "eslint": "10.8.0",
     "typescript": "6.0.3",

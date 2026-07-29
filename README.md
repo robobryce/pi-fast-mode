@@ -1,6 +1,8 @@
 # pi-fast-mode
 
-A small, zero-runtime-dependency provider extension for the [Pi coding agent](https://github.com/earendil-works/pi). It powers Autonomous Agent Bootstrap's fast model profiles by routing them through OpenAI's Responses API with the `priority` service tier.
+A small, zero-runtime-dependency provider extension for the [Pi coding agent](https://github.com/earendil-works/pi). It extracts Autonomous Agent Bootstrap's currently inline fast-mode provider so a later AAB change can replace that generated local extension with this package. AAB does not install this repository yet.
+
+The package preserves the inline extension's behavior: fast model profiles are routed through OpenAI's Responses API with the `priority` service tier.
 
 The extension registers one provider stream handler:
 
@@ -36,17 +38,20 @@ Reference the registered provider and custom API from `~/.pi/agent/models.json`:
       "apiKey": "$AAB_INFERENCE_GATEWAY_API_KEY",
       "models": [
         {
-          "id": "openai/gpt-5.6-sol",
-          "name": "GPT-5.6 Sol Fast",
+          "id": "openai/openai/gpt-5.6-sol",
+          "name": "gpt-5.6",
           "reasoning": true,
           "input": ["text"],
-          "contextWindow": 128000,
-          "maxTokens": 16384,
+          "contextWindow": 1050000,
+          "maxTokens": 128000,
           "cost": {
             "input": 0,
             "output": 0,
             "cacheRead": 0,
             "cacheWrite": 0
+          },
+          "thinkingLevelMap": {
+            "max": "max"
           }
         }
       ]
@@ -66,4 +71,6 @@ npm ci
 npm run check
 ```
 
-`npm run check` runs linting, strict TypeScript checking, provider and stream-delegation tests, a package-content dry run, and a production dependency audit. The package is distributed from Git rather than npm; keep `package.json`'s version in sync with any release tag, run the full check before tagging, and keep installation examples pinned to immutable commits.
+`npm run check` runs linting, strict TypeScript checking, provider and stream-delegation tests, a package-content dry run, and a full dependency audit. CI additionally runs the tests and a Pi loader smoke test against both AAB's pinned Pi 0.80.10 and the current Pi 0.82.1. The package is distributed from Git rather than npm; keep `package.json`'s version in sync with any release tag, run the full check before tagging, and keep installation examples pinned to immutable commits.
+
+The normal development install uses a checked-in type-only facade for `@earendil-works/pi-coding-agent`, because this extension imports only its types and the published CLI package embeds a shrinkwrap with a vulnerable development-only `brace-expansion`. CI replaces the facade with each official Pi version before typechecking, testing, and loading the extension. The persistent lockfile also overrides `brace-expansion` to the patched release and must retain a clean full audit.
